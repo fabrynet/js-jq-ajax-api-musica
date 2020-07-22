@@ -9,10 +9,53 @@
 // Chiamata:
 // https://flynn.boolean.careers/exercises/api/array/music
 
+function addListeners() {
+  $('#select-genre').change(selectMusic);
+}
+
+function selectMusic() {
+  var value = $(this).val();
+  console.log(value);
+
+  var templateCD = $('#cd-template').html();
+  var compiledCD = Handlebars.compile(templateCD);
+  var targetCD = $('.cds-container');
+  targetCD.empty();
+
+  if (value) {
+    $.ajax ({
+      url: 'https://flynn.boolean.careers/exercises/api/array/music',
+      type: 'GET',
+      success: function(data) {
+        var success = data['success'];
+        var cds = data['response'];
+
+        if (success) {
+          for (var i = 0; i < cds.length; i++) {
+            var cd = cds[i];
+            var genre = cd['genre'];
+            if (genre == value) {
+              var templateHTMLCD = compiledCD(cd);
+              targetCD.append(templateHTMLCD);
+            }
+          }
+        } else {
+          console.log('errore');
+        }
+      },
+      error: function(err) {
+        console.log(err);
+      }
+    });
+  } else {
+    getMusic();
+  }
+}
+
 function getMusic () {
-  var template = $('#cd-template').html();
-  var compiled = Handlebars.compile(template);
-  var target = $('.cds-container');
+  var templateCD = $('#cd-template').html();
+  var compiledCD = Handlebars.compile(templateCD);
+  var targetCD = $('.cds-container');
 
   $.ajax ({
     url: 'https://flynn.boolean.careers/exercises/api/array/music',
@@ -24,9 +67,8 @@ function getMusic () {
       if (success) {
         for (var i = 0; i < cds.length; i++) {
           var cd = cds[i];
-          console.log(cd);
-          var templateHTML = compiled(cd);
-          target.append(templateHTML);
+          var templateHTMLCD = compiledCD(cd);
+          targetCD.append(templateHTMLCD);
         }
       } else {
         console.log('errore');
@@ -40,6 +82,7 @@ function getMusic () {
 
 function init() {
   getMusic();
+  addListeners();
 }
 
 $(document).ready(init);
