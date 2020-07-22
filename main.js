@@ -48,11 +48,11 @@ function selectMusic() {
       }
     });
   } else {
-    getMusic();
+    getAllMusic();
   }
 }
 
-function getMusic () {
+function getAllMusic () {
   var templateCD = $('#cd-template').html();
   var compiledCD = Handlebars.compile(templateCD);
   var targetCD = $('.cds-container');
@@ -81,7 +81,7 @@ function getMusic () {
 }
 
 function init() {
-  getMusic();
+  getAllMusic();
   addListeners();
 }
 
