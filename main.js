@@ -14,48 +14,25 @@ function addListeners() {
 }
 
 function selectMusic() {
-  var value = $(this).val();
-  console.log(value);
-
-  var templateCD = $('#cd-template').html();
-  var compiledCD = Handlebars.compile(templateCD);
-  var targetCD = $('.cds-container');
-  targetCD.empty();
-
-  if (value) {
-    $.ajax ({
-      url: 'https://flynn.boolean.careers/exercises/api/array/music',
-      type: 'GET',
-      success: function(data) {
-        var success = data['success'];
-        var cds = data['response'];
-
-        if (success) {
-          for (var i = 0; i < cds.length; i++) {
-            var cd = cds[i];
-            var genre = cd['genre'];
-            if (genre == value) {
-              var templateHTMLCD = compiledCD(cd);
-              targetCD.append(templateHTMLCD);
-            }
-          }
+  var genre = $(this).val();
+  console.log(genre);
+    var cds = $('.cd');
+    cds.each(function(){
+      var cd = $(this);
+      var genreCD = cd.data('genre');
+      if (genre == '') {
+        cd.show();
+      } else {
+        if (genre == genreCD) {
+          cd.show();
         } else {
-          console.log('errore');
+          cd.hide();
         }
-      },
-      error: function(err) {
-        console.log(err);
       }
     });
-  } else {
-    getAllMusic();
-  }
 }
 
-function getAllMusic () {
-  var templateCD = $('#cd-template').html();
-  var compiledCD = Handlebars.compile(templateCD);
-  var targetCD = $('.cds-container');
+function getCd () {
 
   $.ajax ({
     url: 'https://flynn.boolean.careers/exercises/api/array/music',
@@ -65,11 +42,7 @@ function getAllMusic () {
       var cds = data['response'];
       console.log(success, cds);
       if (success) {
-        for (var i = 0; i < cds.length; i++) {
-          var cd = cds[i];
-          var templateHTMLCD = compiledCD(cd);
-          targetCD.append(templateHTMLCD);
-        }
+        printCd(cds);
       } else {
         console.log('errore');
       }
@@ -78,10 +51,25 @@ function getAllMusic () {
       console.log(err);
     }
   });
+
+}
+
+function printCd(cds) {
+
+  var templateCD = $('#cd-template').html();
+  var compiledCD = Handlebars.compile(templateCD);
+  var targetCD = $('.cds-container');
+
+  for (var i = 0; i < cds.length; i++) {
+    var cd = cds[i];
+    var templateHTMLCD = compiledCD(cd);
+    targetCD.append(templateHTMLCD);
+  }
+
 }
 
 function init() {
-  getAllMusic();
+  getCd();
   addListeners();
 }
 
